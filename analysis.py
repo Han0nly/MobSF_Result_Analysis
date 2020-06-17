@@ -43,32 +43,168 @@ class MobSF_result:
 
 
     def analyse_certificate(self):
-        self.v1_false = 0
-        self.v2_false = 0
-        self.v3_false = 0
-        self.sha1withrsa = 0
-        self.md5withrsa = 0
+        self.cert_result = {}
+        self.cert_result['v1_false'] = 0
+        self.cert_result['v2_false'] = 0
+        self.cert_result['v3_false'] = 0
+        self.cert_result['sha1withrsa'] = 0
+        self.cert_result['md5withrsa'] = 0
+        self.cert_result['goodcert'] = 0
         for item in self.content:
             if 'good' in item['certificate_analysis']['description']:
-                continue
+                self.cert_result['goodcert'] = self.cert_result['goodcert'] + 1
             elif 'SHA1withRSA' in item['certificate_analysis']['description']:
-                continue
+                self.cert_result['sha1withrsa'] = self.cert_result['sha1withrsa'] + 1
+            certificate_info = item['certificate_analysis']['certificate_info']
+            split_info = certificate_info.split('\n')
+            for line in split_info:
+                # v1 signature:
+                split_line = line.split(':')
+                if 'v1' in split_line[0]:
+                    if 'True' not in split_line[1]:
+                        self.cert_result['v1_false'] = self.cert_result['v1_false'] + 1
+                # v2 signature:
+                elif 'v2' in split_line[0]:
+                    if 'True' not in split_line[1]:
+                        self.cert_result['v2_false'] = self.cert_result['v2_false'] + 1
+                # v3 signature:
+                elif 'v3' in split_line[0]:
+                    if 'True' not in split_line[1]:
+                        self.cert_result['v3_false'] = self.cert_result['v3_false'] + 1
+
+    def analyse_permissions(self):
+        self.permissions = {}
+        self.permissions['android_permission_INTERNET'] = 0
+        self.permissions['android_permission_SYSTEM_ALERT_WINDOW'] = 0
+        self.permissions['android_permission_RECORD_AUDIO'] = 0
+        self.permissions['android_permission_BLUETOOTH'] = 0
+        self.permissions['android_permission_RECORD_VIDEO'] = 0
+        self.permissions['android_permission_MODIFY_AUDIO_SETTINGS'] = 0
+        self.permissions['android_permission_READ_PHONE_STATE'] = 0
+        self.permissions['android_permission_WAKE_LOCK'] = 0
+        self.permissions['android_permission_WRITE_SETTINGS'] = 0
+
+
+        self.permissions['android_permission_ACCESS_FINE_LOCATION'] = 0
+        self.permissions['android_permission_ACCESS_COARSE_LOCATION'] = 0
+        self.permissions['android_permission_CAMERA'] = 0
+        self.permissions['android_permission_READ_EXTERNAL_STORAGE'] = 0
+        self.permissions['android_permission_WRITE_EXTERNAL_STORAGE'] = 0
+
+        # Self-Designed Permissions
+        self.permissions['com_android_vending_CHECK_LICENSE'] = 0
+        self.permissions['com_google_android_finsky_permission_BIND_GET_INSTALL_REFERRER_SERVICE'] = 0
+
+        for item in self.content:
+            for perm in item['permissions'].keys():
+                if item['permissions'][perm]['status'] == "dangerous":
+                    if perm in self.permissions.keys():
+                        self.permissions[perm] = self.permissions[perm] + 1
+                    else:
+                        self.permissions[perm] = 0
+                else:
+                    continue
+
+    def analyse_manifest(self):
+        self.manifest = {}
+        self.manifest['Clear_text'] = 0
+        for item in self.content:
+            for weakness in item['manifest_analysis']:
+                # 判断cleartest选项
+                if 'Clear' == weakness['title'][0:4]:
+                    self.manifest['Clear_text'] = self.manifest['Clear_text'] + 1
+
+    def binary_analysis(self):
+        self.binary = {}
+        self.binary['PIE'] = 0
+        for item in self.content:
+            for weakness in item['binary_analysis']:
+                # 判断PIE选项
+                if 'Position Independent Executable' in weakness['title']:
+                    self.binary['PIE'] = self.binary['PIE'] + 1
+
+    def code_analysis(self):
+        self.code = {}
+        for item in self.content:
+            for weakness in item['code_analysis'].keys():
+                if item['code_analysis'][weakness]['level'] == "high":
+                    if weakness in self.code.keys():
+                        self.code[weakness] = self.code[weakness] + 1
+                    else:
+                        self.code[weakness] = 0
+                else:
+                    continue
+
+    def tracker_analysis(self):
+        self.trackers = {}
+        self.trackers['count'] = 0
+        self.trackers['0-50'] = 0
+        self.trackers['51-100'] = 0
+        self.trackers['101-150'] = 0
+        self.trackers['151-200'] = 0
+        self.trackers['201-250'] = 0
+        self.trackers['251-300'] = 0
+        self.trackers['301+'] = 0
+        for item in self.content:
+            self.trackers['count'] = self.trackers['count'] + item['trackers']['total_trackers']
+            if item['trackers']['total_trackers']<=50:
+                self.trackers['0-50'] = self.trackers['0-50'] + 1
+            elif item['trackers']['total_trackers']<=100:
+                self.trackers['0-50'] = self.trackers['51-100'] + 1
+            elif item['trackers']['total_trackers']<=150:
+                self.trackers['0-50'] = self.trackers['101-150'] + 1
+            elif item['trackers']['total_trackers']<=200:
+                self.trackers['0-50'] = self.trackers['151-200'] + 1
+            elif item['trackers']['total_trackers']<=250:
+                self.trackers['0-50'] = self.trackers['201-250'] + 1
+            elif item['trackers']['total_trackers']<=300:
+                self.trackers['0-50'] = self.trackers['251-300'] + 1
             else:
-                print(item['certificate_analysis']['description'])
-            # print(item['certificate_analysis']['description'])
-            # certificate_info = item['certificate_analysis']['certificate_info']
-            # certificate_info.split('\n')
-            # v1 signature:
-            # v2 signature:
-            # v3 signature:
+                self.trackers['301+'] = self.trackers['301+'] + 1
+
+    def virustotal(self):
+        self.virus = 0
+        for item in self.content:
+            if 'positives' in item['virus_total'].keys() and item['virus_total']['positives']>0:
+                self.virus=self.virus+1
+
+    def exported_count(self):
+        self.exported = {}
+        self.exported['exported_activities'] = 0
+        self.exported['exported_receivers'] = 0
+        self.exported['exported_providers'] = 0
+        self.exported['exported_services'] = 0
+        for item in self.content:
+            self.exported['exported_activities'] = self.exported['exported_activities'] + item['exported_count']['exported_activities']
+            self.exported['exported_receivers'] = self.exported['exported_receivers'] + item['exported_count']['exported_receivers']
+            self.exported['exported_providers'] = self.exported['exported_providers'] + item['exported_count']['exported_providers']
+            self.exported['exported_services'] = self.exported['exported_services'] + item['exported_count']['exported_services']
+
 
     def analyse_all(self):
         self.analyse_certificate()
+        self.analyse_permissions()
+        self.analyse_manifest()
+        self.binary_analysis()
+        self.code_analysis()
+        self.tracker_analysis()
+        self.virustotal()
+        self.exported_count()
 
 
 def main():
     result = MobSF_result()
-    result.analyse_certificate()
+    result.analyse_all()
+    with open('./result.txt','w') as f:
+        f.write(f"{result.cert_result}\n")
+        f.write(f"{result.permissions}\n")
+        f.write(f"{result.binary}\n")
+        f.write(f"{result.manifest}\n")
+        f.write(f"{result.code}\n")
+        f.write(f"{result.trackers}\n")
+        f.write(f"{result.exported}\n")
+        f.write(f"{result.virus}\n")
+
 
 
 if __name__ == '__main__':
