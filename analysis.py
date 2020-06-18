@@ -182,34 +182,34 @@ def main():
     with open('./result.txt','w') as f:
         f.write(f"{result.cert_result}\n")
         for key in result.cert_result.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.cert_result[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.cert_result[key]/result.count))
 
         f.write(f"{result.permissions}\n")
         for key in result.permissions.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.permissions[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.permissions[key]/result.count))
 
         f.write(f"{result.binary}\n")
         for key in result.binary.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.binary[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.binary[key]/result.count))
 
         f.write(f"{result.manifest}\n")
         for key in result.manifest.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.manifest[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.manifest[key]/result.count))
 
         f.write(f"{result.code}\n")
         for key in result.code.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.code[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.code[key]/result.count))
 
         f.write(f"{result.trackers}\n")
         for key in result.trackers.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.trackers[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.trackers[key]/result.count))
 
         f.write(f"{result.exported}\n")
         for key in result.exported.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(result.exported[key]/result.count))
+            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.exported[key]/result.count))
 
         f.write(f"Virustotal_result:{result.virus}\n")
-        f.write("Virustotal_result:" + "{:.2f}%\n".format(result.virus/result.count))
+        f.write("Virustotal_result:" + "{:.2f}%\n".format(100 * result.virus/result.count))
 
 
 
