@@ -75,27 +75,6 @@ class MobSF_result:
 
     def analyse_permissions(self):
         self.permissions = {}
-        self.permissions['android_permission_INTERNET'] = 0
-        self.permissions['android_permission_SYSTEM_ALERT_WINDOW'] = 0
-        self.permissions['android_permission_RECORD_AUDIO'] = 0
-        self.permissions['android_permission_BLUETOOTH'] = 0
-        self.permissions['android_permission_RECORD_VIDEO'] = 0
-        self.permissions['android_permission_MODIFY_AUDIO_SETTINGS'] = 0
-        self.permissions['android_permission_READ_PHONE_STATE'] = 0
-        self.permissions['android_permission_WAKE_LOCK'] = 0
-        self.permissions['android_permission_WRITE_SETTINGS'] = 0
-
-
-        self.permissions['android_permission_ACCESS_FINE_LOCATION'] = 0
-        self.permissions['android_permission_ACCESS_COARSE_LOCATION'] = 0
-        self.permissions['android_permission_CAMERA'] = 0
-        self.permissions['android_permission_READ_EXTERNAL_STORAGE'] = 0
-        self.permissions['android_permission_WRITE_EXTERNAL_STORAGE'] = 0
-
-        # Self-Designed Permissions
-        self.permissions['com_android_vending_CHECK_LICENSE'] = 0
-        self.permissions['com_google_android_finsky_permission_BIND_GET_INSTALL_REFERRER_SERVICE'] = 0
-
         for item in self.content:
             if item['permissions']:
                 for perm in item['permissions'].keys():
@@ -103,7 +82,7 @@ class MobSF_result:
                         if perm in self.permissions.keys():
                             self.permissions[perm] = self.permissions[perm] + 1
                         else:
-                            self.permissions[perm] = 0
+                            self.permissions[perm] = 1
                     else:
                         continue
 
@@ -134,7 +113,7 @@ class MobSF_result:
                         if weakness in self.code.keys():
                             self.code[weakness] = self.code[weakness] + 1
                         else:
-                            self.code[weakness] = 0
+                            self.code[weakness] = 1
                     else:
                         continue
 
