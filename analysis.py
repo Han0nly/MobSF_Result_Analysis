@@ -51,26 +51,27 @@ class MobSF_result:
         self.cert_result['md5withrsa'] = 0
         self.cert_result['goodcert'] = 0
         for item in self.content:
-            if 'good' in item['certificate_analysis']['description']:
-                self.cert_result['goodcert'] = self.cert_result['goodcert'] + 1
-            elif 'SHA1withRSA' in item['certificate_analysis']['description']:
-                self.cert_result['sha1withrsa'] = self.cert_result['sha1withrsa'] + 1
-            certificate_info = item['certificate_analysis']['certificate_info']
-            split_info = certificate_info.split('\n')
-            for line in split_info:
-                # v1 signature:
-                split_line = line.split(':')
-                if 'v1' in split_line[0]:
-                    if 'True' not in split_line[1]:
-                        self.cert_result['v1_false'] = self.cert_result['v1_false'] + 1
-                # v2 signature:
-                elif 'v2' in split_line[0]:
-                    if 'True' not in split_line[1]:
-                        self.cert_result['v2_false'] = self.cert_result['v2_false'] + 1
-                # v3 signature:
-                elif 'v3' in split_line[0]:
-                    if 'True' not in split_line[1]:
-                        self.cert_result['v3_false'] = self.cert_result['v3_false'] + 1
+            if item['certificate_analysis']:
+                if 'good' in item['certificate_analysis']['description']:
+                    self.cert_result['goodcert'] = self.cert_result['goodcert'] + 1
+                elif 'SHA1withRSA' in item['certificate_analysis']['description']:
+                    self.cert_result['sha1withrsa'] = self.cert_result['sha1withrsa'] + 1
+                certificate_info = item['certificate_analysis']['certificate_info']
+                split_info = certificate_info.split('\n')
+                for line in split_info:
+                    # v1 signature:
+                    split_line = line.split(':')
+                    if 'v1' in split_line[0]:
+                        if 'True' not in split_line[1]:
+                            self.cert_result['v1_false'] = self.cert_result['v1_false'] + 1
+                    # v2 signature:
+                    elif 'v2' in split_line[0]:
+                        if 'True' not in split_line[1]:
+                            self.cert_result['v2_false'] = self.cert_result['v2_false'] + 1
+                    # v3 signature:
+                    elif 'v3' in split_line[0]:
+                        if 'True' not in split_line[1]:
+                            self.cert_result['v3_false'] = self.cert_result['v3_false'] + 1
 
     def analyse_permissions(self):
         self.permissions = {}
@@ -96,14 +97,15 @@ class MobSF_result:
         self.permissions['com_google_android_finsky_permission_BIND_GET_INSTALL_REFERRER_SERVICE'] = 0
 
         for item in self.content:
-            for perm in item['permissions'].keys():
-                if item['permissions'][perm]['status'] == "dangerous":
-                    if perm in self.permissions.keys():
-                        self.permissions[perm] = self.permissions[perm] + 1
+            if item['permissions']:
+                for perm in item['permissions'].keys():
+                    if item['permissions'][perm]['status'] == "dangerous":
+                        if perm in self.permissions.keys():
+                            self.permissions[perm] = self.permissions[perm] + 1
+                        else:
+                            self.permissions[perm] = 0
                     else:
-                        self.permissions[perm] = 0
-                else:
-                    continue
+                        continue
 
     def analyse_manifest(self):
         self.manifest = {}
@@ -126,14 +128,15 @@ class MobSF_result:
     def code_analysis(self):
         self.code = {}
         for item in self.content:
-            for weakness in item['code_analysis'].keys():
-                if item['code_analysis'][weakness]['level'] == "high":
-                    if weakness in self.code.keys():
-                        self.code[weakness] = self.code[weakness] + 1
+            if item['code_analysis']:
+                for weakness in item['code_analysis'].keys():
+                    if item['code_analysis'][weakness]['level'] == "high":
+                        if weakness in self.code.keys():
+                            self.code[weakness] = self.code[weakness] + 1
+                        else:
+                            self.code[weakness] = 0
                     else:
-                        self.code[weakness] = 0
-                else:
-                    continue
+                        continue
 
     def tracker_analysis(self):
         self.trackers = {}
@@ -146,27 +149,29 @@ class MobSF_result:
         self.trackers['251-300'] = 0
         self.trackers['301+'] = 0
         for item in self.content:
-            self.trackers['count'] = self.trackers['count'] + item['trackers']['total_trackers']
-            if item['trackers']['total_trackers']<=50:
-                self.trackers['0-50'] = self.trackers['0-50'] + 1
-            elif item['trackers']['total_trackers']<=100:
-                self.trackers['0-50'] = self.trackers['51-100'] + 1
-            elif item['trackers']['total_trackers']<=150:
-                self.trackers['0-50'] = self.trackers['101-150'] + 1
-            elif item['trackers']['total_trackers']<=200:
-                self.trackers['0-50'] = self.trackers['151-200'] + 1
-            elif item['trackers']['total_trackers']<=250:
-                self.trackers['0-50'] = self.trackers['201-250'] + 1
-            elif item['trackers']['total_trackers']<=300:
-                self.trackers['0-50'] = self.trackers['251-300'] + 1
-            else:
-                self.trackers['301+'] = self.trackers['301+'] + 1
+            if item['trackers'] and item['trackers']['total_trackers']:
+                self.trackers['count'] = self.trackers['count'] + item['trackers']['total_trackers']
+                if item['trackers']['total_trackers']<=50:
+                    self.trackers['0-50'] = self.trackers['0-50'] + 1
+                elif item['trackers']['total_trackers']<=100:
+                    self.trackers['0-50'] = self.trackers['51-100'] + 1
+                elif item['trackers']['total_trackers']<=150:
+                    self.trackers['0-50'] = self.trackers['101-150'] + 1
+                elif item['trackers']['total_trackers']<=200:
+                    self.trackers['0-50'] = self.trackers['151-200'] + 1
+                elif item['trackers']['total_trackers']<=250:
+                    self.trackers['0-50'] = self.trackers['201-250'] + 1
+                elif item['trackers']['total_trackers']<=300:
+                    self.trackers['0-50'] = self.trackers['251-300'] + 1
+                else:
+                    self.trackers['301+'] = self.trackers['301+'] + 1
 
     def virustotal(self):
         self.virus = 0
         for item in self.content:
-            if 'positives' in item['virus_total'].keys() and item['virus_total']['positives']>0:
-                self.virus=self.virus+1
+            if item['virus_total']:
+                if 'positives' in item['virus_total'].keys() and item['virus_total']['positives']>0:
+                    self.virus=self.virus+1
 
     def exported_count(self):
         self.exported = {}
