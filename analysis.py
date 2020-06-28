@@ -211,7 +211,7 @@ def main():
 
         # 写入第一列数据，第一行已经有数据了，i+2
         if index==0:
-            results_key = result.cert_result.keys() + result.permissions.keys() + result.binary.keys() + result.trackers.keys() + result.exported.keys() + result.manifest.keys() + result.code.keys()
+            results_key = list(result.cert_result.keys()) + list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
             for i in range(len(results_key)):
                 worksheet.cell(i + 2, 1, results_key[i])
 
