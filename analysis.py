@@ -197,17 +197,17 @@ def main():
         for key in result.cert_result.keys():
             results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
         for key in result.permissions.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.permissions[key] / result.count))
         for key in result.binary.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
         for key in result.trackers.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.trackers[key] / result.count))
         for key in result.exported.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.exported[key] / result.count))
         for key in result.manifest.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
         for key in result.code.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
 
         # 写入第一列数据，第一行已经有数据了，i+2
         if index==0:
