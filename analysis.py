@@ -1,19 +1,22 @@
 import pymongo, json
 import logging
 import config
+import openpyxl
 
 
 class MobSF_result:
-    def __init__(self):
+    def __init__(self,colname):
         """
         MobSF_result object constructor.
         """
         self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
         self.dbip = config.dbip
         self.dbport = config.dbport
+        if colname:
+            self.colname = colname
+        else:
+            self.colname = config.colname
         self.dbname = config.dbname
-        self.colname = config.colname
-
         self._connect()
 
     ##############################
@@ -177,40 +180,47 @@ class MobSF_result:
 
 
 def main():
-    result = MobSF_result()
-    result.analyse_all()
-    with open('./result.txt','w') as f:
-        f.write(f"{result.cert_result}\n")
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = config.colname
+    # worksheet2 = workbook.create_sheet()  # 默认插在工作簿末尾
+    # worksheet2.title = "New Title"
+    results_content = []
+    Project = ['Analysis_name','PHOTOGRAPHY', 'ANDROID_WEAR', 'COMICS', 'PRODUCTIVITY', 'PERSONALIZATION', 'BOOKS_AND_REFERENCE', 'FINANCE', 'SPORTS', 'SOCIAL', 'PARENTING', 'LIFESTYLE', 'EVENTS', 'HOUSE_AND_HOME', 'BUSINESS', 'MAPS_AND_NAVIGATION', 'SHOPPING', 'ENTERTAINMENT', 'ART_AND_DESIGN', 'EDUCATION', 'TOOLS', 'NEWS_AND_MAGAZINES', 'WEATHER', 'LIBRARIES_AND_DEMO', 'AUTO_AND_VEHICLES', 'VIDEO_PLAYERS', 'FAMILY', 'DATING', 'HEALTH_AND_FITNESS', 'MUSIC_AND_AUDIO', 'TRAVEL_AND_LOCAL', 'BEAUTY', 'MEDICAL', 'FOOD_AND_DRINK', 'COMMUNICATION', 'GAME']
+    # 写入第一行数据，行号和列号都从1开始计数
+    for i in range(len(Project)):
+        worksheet.cell(1, i + 1, Project[i])
+    index = 0
+    for col in Project[1:]:
+        result = MobSF_result(col)
+        result.analyse_all()
         for key in result.cert_result.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.cert_result[key]/result.count))
-
-        f.write(f"{result.permissions}\n")
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
         for key in result.permissions.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.permissions[key]/result.count))
-
-        f.write(f"{result.binary}\n")
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
         for key in result.binary.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.binary[key]/result.count))
-
-        f.write(f"{result.manifest}\n")
-        for key in result.manifest.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.manifest[key]/result.count))
-
-        f.write(f"{result.code}\n")
-        for key in result.code.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.code[key]/result.count))
-
-        f.write(f"{result.trackers}\n")
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
         for key in result.trackers.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.trackers[key]/result.count))
-
-        f.write(f"{result.exported}\n")
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
         for key in result.exported.keys():
-            f.write(f"{key}:"+"{:.2f}%\n".format(100 * result.exported[key]/result.count))
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+        for key in result.manifest.keys():
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+        for key in result.code.keys():
+            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
 
-        f.write(f"Virustotal_result:{result.virus}\n")
-        f.write("Virustotal_result:" + "{:.2f}%\n".format(100 * result.virus/result.count))
+        # 写入第一列数据，第一行已经有数据了，i+2
+        if index==0:
+            results_key = result.cert_result.keys() + result.permissions.keys() + result.binary.keys() + result.trackers.keys() + result.exported.keys() + result.manifest.keys() + result.code.keys()
+            for i in range(len(results_key)):
+                worksheet.cell(i + 2, 1, results_key[i])
 
+        # 写入第二列数据
+        for i in range(len(results_content)):
+            worksheet.cell(i + 2, index+2, results_content[i])
+        index = index+1
+
+    workbook.save(filename='./result.xlsx')
 
 
 if __name__ == '__main__':
