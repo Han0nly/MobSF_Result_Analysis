@@ -1,4 +1,4 @@
 dbip = '127.0.0.1'
 dbport = '27017'
-dbname = 'popular_apps'
+dbname = 'third_party_medical_apps'
 colname = 'ModSF'
