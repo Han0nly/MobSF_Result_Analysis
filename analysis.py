@@ -185,39 +185,103 @@ def main():
     worksheet.title = config.colname
     # worksheet2 = workbook.create_sheet()  # 默认插在工作簿末尾
     # worksheet2.title = "New Title"
-    results_content = []
     Project = ['Analysis_name','PHOTOGRAPHY', 'ANDROID_WEAR', 'COMICS', 'PRODUCTIVITY', 'PERSONALIZATION', 'BOOKS_AND_REFERENCE', 'FINANCE', 'SPORTS', 'SOCIAL', 'PARENTING', 'LIFESTYLE', 'EVENTS', 'HOUSE_AND_HOME', 'BUSINESS', 'MAPS_AND_NAVIGATION', 'SHOPPING', 'ENTERTAINMENT', 'ART_AND_DESIGN', 'EDUCATION', 'TOOLS', 'NEWS_AND_MAGAZINES', 'WEATHER', 'LIBRARIES_AND_DEMO', 'AUTO_AND_VEHICLES', 'VIDEO_PLAYERS', 'FAMILY', 'DATING', 'HEALTH_AND_FITNESS', 'MUSIC_AND_AUDIO', 'TRAVEL_AND_LOCAL', 'BEAUTY', 'MEDICAL', 'FOOD_AND_DRINK', 'COMMUNICATION', 'GAME']
     # 写入第一行数据，行号和列号都从1开始计数
     for i in range(len(Project)):
         worksheet.cell(1, i + 1, Project[i])
+
     index = 0
+    results_key = []
+    results_content = []
+
     for col in Project[1:]:
         result = MobSF_result(col)
         result.analyse_all()
-        for key in result.cert_result.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
-        for key in result.permissions.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.permissions[key] / result.count))
-        for key in result.binary.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
-        for key in result.trackers.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.trackers[key] / result.count))
-        for key in result.exported.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.exported[key] / result.count))
-        for key in result.manifest.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
-        for key in result.code.keys():
-            results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
-
-        # 写入第一列数据，第一行已经有数据了，i+2
-        if index==0:
+        if index == 0:
+            # 写入第一列数据，第一行已经有数据了，i+2
             results_key = list(result.cert_result.keys()) + list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
             for i in range(len(results_key)):
                 worksheet.cell(i + 2, 1, results_key[i])
-
-        # 写入第二列数据
-        for i in range(len(results_content)):
-            worksheet.cell(i + 2, index+2, results_content[i])
+            for key in result.cert_result.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+            for key in result.permissions.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.permissions[key] / result.count))
+            for key in result.binary.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
+            for key in result.trackers.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.trackers[key] / result.count))
+            for key in result.exported.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.exported[key] / result.count))
+            for key in result.manifest.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
+            for key in result.code.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
+            # 写入第二列数据
+            for i in range(len(results_content)):
+                worksheet.cell(i + 2, index+2, results_content[i])
+        else:
+            for i in range(len(results_content)):
+                results_content[i] = ""
+            for key in result.cert_result.keys():
+                try:
+                    results_content[results_key.index(key)]="{:.2f}%\n".format(
+                        100 * result.cert_result[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(
+                        100 * result.cert_result[key] / result.count))
+            for key in result.permissions.keys():
+                try:
+                    results_content[results_key.index(key)]="{:.2f}%\n".format(
+                        100 * result.permissions[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(
+                        100 * result.permissions[key] / result.count))
+            for key in result.binary.keys():
+                try:
+                    results_content[results_key.index(key)]="{:.2f}%\n".format(
+                        100 * result.binary[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
+            for key in result.trackers.keys():
+                try:
+                    results_content[results_key.index(key)]="{:.2f}%\n".format(
+                        100 * result.trackers[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(100 * result.trackers[key] / result.count))
+            for key in result.exported.keys():
+                try:
+                    results_content[results_key.index(key)]="{:.2f}%\n".format(
+                        100 * result.exported[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(100 * result.exported[key] / result.count))
+            for key in result.manifest.keys():
+                try:
+                    results_content[results_key.index(key)]="{:.2f}%\n".format(
+                        100 * result.manifest[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
+            for key in result.code.keys():
+                try:
+                    results_content[results_key.index(key)] = "{:.2f}%\n".format(
+                        100 * result.code[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
+            for i in range(len(results_content)):
+                worksheet.cell(i + 2, index + 2, results_content[i])
         index = index+1
 
     workbook.save(filename='./result.xlsx')
