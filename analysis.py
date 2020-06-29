@@ -95,7 +95,7 @@ class MobSF_result:
         for item in self.content:
             for weakness in item['manifest_analysis']:
                 # 判断cleartest选项
-                if 'Clear' == weakness['title'][0:4]:
+                if 'Clear' == weakness['title'][:5]:
                     self.manifest['Clear_text'] = self.manifest['Clear_text'] + 1
 
     def binary_analysis(self):
@@ -113,47 +113,57 @@ class MobSF_result:
             if item['code_analysis']:
                 for weakness in item['code_analysis'].keys():
                     if item['code_analysis'][weakness]['level'] == "high":
-                        if weakness in self.code.keys():
-                            self.code[weakness] = self.code[weakness] + 1
+                        if ('code_'+weakness) in self.code.keys():
+                            self.code['code_'+weakness] = self.code['code_'+weakness] + 1
                         else:
-                            self.code[weakness] = 1
-                    else:
-                        continue
+                            self.code['code_'+weakness] = 1
 
     def tracker_analysis(self):
         self.trackers = {}
-        self.trackers['count'] = 0
-        self.trackers['0-50'] = 0
-        self.trackers['51-100'] = 0
-        self.trackers['101-150'] = 0
-        self.trackers['151-200'] = 0
-        self.trackers['201-250'] = 0
-        self.trackers['251-300'] = 0
-        self.trackers['301+'] = 0
+        self.trackers['trackers_count'] = 0
+        self.trackers['trackers_300-320'] = 0
+        self.trackers['trackers_321-340'] = 0
+        self.trackers['trackers_341-360'] = 0
+        self.trackers['trackers_361-380'] = 0
+        self.trackers['trackers_381-400'] = 0
+        self.trackers['trackers_401+'] = 0
         for item in self.content:
             if item['trackers'] and item['trackers']['trackers']:
                 for t in item['trackers']['trackers']:
                     for identified_trackers in t.keys():
-                        if identified_trackers in self.trackers.keys():
-                            self.trackers[identified_trackers] = self.trackers[identified_trackers] + 1
+                        if ('trackers_'+identified_trackers) in self.trackers.keys():
+                            self.trackers['trackers_'+identified_trackers] = self.trackers['trackers_'+identified_trackers] + 1
                         else:
-                            self.trackers[identified_trackers] = 1
+                            self.trackers['trackers_'+identified_trackers] = 1
             if item['trackers'] and item['trackers']['total_trackers']:
-                self.trackers['count'] = self.trackers['count'] + item['trackers']['total_trackers']
-                if item['trackers']['total_trackers']<=50:
-                    self.trackers['0-50'] = self.trackers['0-50'] + 1
-                elif item['trackers']['total_trackers']<=100:
-                    self.trackers['0-50'] = self.trackers['51-100'] + 1
-                elif item['trackers']['total_trackers']<=150:
-                    self.trackers['0-50'] = self.trackers['101-150'] + 1
-                elif item['trackers']['total_trackers']<=200:
-                    self.trackers['0-50'] = self.trackers['151-200'] + 1
-                elif item['trackers']['total_trackers']<=250:
-                    self.trackers['0-50'] = self.trackers['201-250'] + 1
-                elif item['trackers']['total_trackers']<=300:
-                    self.trackers['0-50'] = self.trackers['251-300'] + 1
+                self.trackers['trackers_count'] = self.trackers['trackers_count'] + item['trackers']['total_trackers']
+                if item['trackers']['total_trackers']<=320:
+                    self.trackers['trackers_300-320'] = self.trackers['trackers_300-320'] + 1
+                elif item['trackers']['total_trackers']<=340:
+                    self.trackers['trackers_321-340'] = self.trackers['trackers_321-340'] + 1
+                elif item['trackers']['total_trackers']<=360:
+                    self.trackers['trackers_341-360'] = self.trackers['trackers_341-360'] + 1
+                elif item['trackers']['total_trackers']<=380:
+                    self.trackers['trackers_361-380'] = self.trackers['trackers_361-380'] + 1
+                elif item['trackers']['total_trackers']<=400:
+                    self.trackers['trackers_381-400'] = self.trackers['trackers_381-400'] + 1
                 else:
-                    self.trackers['301+'] = self.trackers['301+'] + 1
+                    self.trackers['trackers_401+'] = self.trackers['trackers_401+'] + 1
+
+    def domains_analysis(self):
+        self.domains = {}
+        for item in self.content:
+            if item['domains']:
+                for dom in item['domains'].keys():
+                    if item['domains'][dom]['bad'] == "no":
+                        keyname = 'domains_good_' + dom
+                    else:
+                        keyname = 'domains_bad_' + dom
+                    if keyname in self.domains.keys():
+                        self.domains[keyname] = self.domains[keyname] + 1
+                    else:
+                        self.domains[keyname] = 1
+
 
     def virustotal(self):
         self.virus = 0
@@ -183,6 +193,7 @@ class MobSF_result:
         self.code_analysis()
         self.tracker_analysis()
         self.virustotal()
+        self.domains_analysis()
         self.exported_count()
 
 
@@ -213,6 +224,8 @@ def main():
                 results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
             for key in result.permissions.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.permissions[key] / result.count))
+            for key in result.domains.keys():
+                results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
             for key in result.binary.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
             for key in result.trackers.keys():
@@ -228,7 +241,7 @@ def main():
                 worksheet.cell(i + 2, 2, results_content[i])
         else:
             for i in range(len(results_content)):
-                results_content[i] = ""
+                results_content[i] = "0.00%"
             for key in result.cert_result.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
@@ -247,6 +260,14 @@ def main():
                     worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(
                         100 * result.permissions[key] / result.count))
+            for key in result.domains.keys():
+                try:
+                    results_content[results_key.index(key)] = "{:.2f}%\n".format(
+                        100 * result.domains[key] / result.count)
+                except ValueError:
+                    results_key.append(key)
+                    worksheet.cell(len(results_key) + 1, 1, key)
+                    results_content.append("{:.2f}%\n".format(100 * result.domains[key] / result.count))
             for key in result.binary.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
