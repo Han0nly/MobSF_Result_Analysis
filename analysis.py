@@ -225,7 +225,7 @@ def main():
             for key in result.permissions.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.permissions[key] / result.count))
             for key in result.domains.keys():
-                results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
+                results_content.append("{:.2f}%\n".format(100 * result.domains[key] / result.count))
             for key in result.binary.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
             for key in result.trackers.keys():
