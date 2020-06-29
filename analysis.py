@@ -131,6 +131,13 @@ class MobSF_result:
         self.trackers['251-300'] = 0
         self.trackers['301+'] = 0
         for item in self.content:
+            if item['trackers'] and item['trackers']['trackers']:
+                for t in item['trackers']['trackers']:
+                    for identified_trackers in t.keys():
+                        if identified_trackers in self.trackers.keys():
+                            self.trackers[identified_trackers] = self.trackers[identified_trackers] + 1
+                        else:
+                            self.trackers[identified_trackers] = 1
             if item['trackers'] and item['trackers']['total_trackers']:
                 self.trackers['count'] = self.trackers['count'] + item['trackers']['total_trackers']
                 if item['trackers']['total_trackers']<=50:
