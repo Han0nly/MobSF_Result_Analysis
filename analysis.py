@@ -218,7 +218,7 @@ def main():
                 results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
             # 写入第二列数据
             for i in range(len(results_content)):
-                worksheet.cell(i + 2, index+2, results_content[i])
+                worksheet.cell(i + 2, 2, results_content[i])
         else:
             for i in range(len(results_content)):
                 results_content[i] = ""
@@ -228,7 +228,7 @@ def main():
                         100 * result.cert_result[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(
                         100 * result.cert_result[key] / result.count))
             for key in result.permissions.keys():
@@ -237,7 +237,7 @@ def main():
                         100 * result.permissions[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(
                         100 * result.permissions[key] / result.count))
             for key in result.binary.keys():
@@ -246,7 +246,7 @@ def main():
                         100 * result.binary[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
             for key in result.trackers.keys():
                 try:
@@ -254,7 +254,7 @@ def main():
                         100 * result.trackers[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(100 * result.trackers[key] / result.count))
             for key in result.exported.keys():
                 try:
@@ -262,7 +262,7 @@ def main():
                         100 * result.exported[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(100 * result.exported[key] / result.count))
             for key in result.manifest.keys():
                 try:
@@ -270,7 +270,7 @@ def main():
                         100 * result.manifest[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
             for key in result.code.keys():
                 try:
@@ -278,7 +278,7 @@ def main():
                         100 * result.code[key] / result.count)
                 except ValueError:
                     results_key.append(key)
-                    worksheet.cell(len(results_content) + 1, 1, results_key[-1])
+                    worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
             for i in range(len(results_content)):
                 worksheet.cell(i + 2, index + 2, results_content[i])
