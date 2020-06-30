@@ -219,8 +219,6 @@ def main():
         if index == 0:
             # 写入第一列数据，第一行已经有数据了，i+2
             results_key = list(result.cert_result.keys()) + list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
-            for i in range(len(results_key)):
-                worksheet.cell(i + 2, 1, results_key[i])
             for key in result.cert_result.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
             for key in result.permissions.keys():
@@ -237,12 +235,22 @@ def main():
                 results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
             for key in result.code.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
+            # 写入第一列数据
+            for i in range(len(results_key)):
+                worksheet.cell(i + 2, 1, results_key[i])
             # 写入第二列数据
-            for i in range(len(results_content)):
                 worksheet.cell(i + 2, 2, results_content[i])
+            if len(results_key) == len(results_content):
+                print("results_key==results_content=="+str(len(results_key)))
+            else:
+                print("results_content=="+str(len(results_content)))
         else:
             for i in range(len(results_content)):
                 results_content[i] = "0.00%"
+            if len(results_key) == len(results_content):
+                print("results_key==results_content=="+str(len(results_key)))
+            else:
+                print("results_content=="+str(len(results_content)))
             for key in result.cert_result.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
@@ -260,7 +268,7 @@ def main():
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
                     results_content.append("{:.2f}%\n".format(
-                        100 * result.permissions[key] / result.count))
+                        100 *  result.permissions[key] / result.count))
             for key in result.domains.keys():
                 try:
                     results_content[results_key.index(key)] = "{:.2f}%\n".format(
@@ -268,7 +276,8 @@ def main():
                 except ValueError:
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
-                    results_content.append("{:.2f}%\n".format(100 * result.domains[key] / result.count))
+                    results_content.append("{:.2f}%\n".format(
+                        100 *  result.domains[key] / result.count))
             for key in result.binary.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
@@ -276,7 +285,8 @@ def main():
                 except ValueError:
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
-                    results_content.append("{:.2f}%\n".format(100 * result.binary[key] / result.count))
+                    results_content.append("{:.2f}%\n".format(
+                        100 *  result.binary[key] / result.count))
             for key in result.trackers.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
@@ -284,7 +294,8 @@ def main():
                 except ValueError:
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
-                    results_content.append("{:.2f}%\n".format(100 * result.trackers[key] / result.count))
+                    results_content.append("{:.2f}%\n".format(
+                        100 *  result.trackers[key] / result.count))
             for key in result.exported.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
@@ -292,7 +303,8 @@ def main():
                 except ValueError:
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
-                    results_content.append("{:.2f}%\n".format(100 * result.exported[key] / result.count))
+                    results_content.append("{:.2f}%\n".format(
+                        100 * result.exported[key] / result.count))
             for key in result.manifest.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
@@ -300,7 +312,8 @@ def main():
                 except ValueError:
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
-                    results_content.append("{:.2f}%\n".format(100 * result.manifest[key] / result.count))
+                    results_content.append("{:.2f}%\n".format(
+                        100 * result.manifest[key] / result.count))
             for key in result.code.keys():
                 try:
                     results_content[results_key.index(key)] = "{:.2f}%\n".format(
@@ -308,7 +321,8 @@ def main():
                 except ValueError:
                     results_key.append(key)
                     worksheet.cell(len(results_key) + 1, 1, key)
-                    results_content.append("{:.2f}%\n".format(100 * result.code[key] / result.count))
+                    results_content.append("{:.2f}%\n".format(
+                        100 * result.code[key] / result.count))
             for i in range(len(results_content)):
                 worksheet.cell(i + 2, index + 2, results_content[i])
         index = index+1
