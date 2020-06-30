@@ -219,6 +219,14 @@ def main():
         if index == 0:
             # 写入第一列数据，第一行已经有数据了，i+2
             results_key = list(result.cert_result.keys()) + list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
+            print("results_keys =" + str(len(results_key)))
+            print("result.cert_result =" + str(len(result.cert_result.keys())))
+            print("result.permissions.keys =" + str(len(result.permissions.keys())))
+            print("result.binary.keys =" + str(len(result.binary.keys())))
+            print("result.trackers.keys =" + str(len(result.trackers.keys())))
+            print("result.exported =" + str(len(result.exported.keys())))
+            print("result.manifest.keys =" + str(len(result.manifest.keys())))
+            print("result.code.keys() =" + str(len(result.code.keys())))
             for key in result.cert_result.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
             for key in result.permissions.keys():
