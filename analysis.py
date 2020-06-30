@@ -219,14 +219,14 @@ def main():
         if index == 0:
             # 写入第一列数据，第一行已经有数据了，i+2
             results_key = list(result.cert_result.keys()) + list(result.domains.keys()) +list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
-            print("results_keys =" + str(len(results_key)))
-            print("result.cert_result =" + str(len(result.cert_result.keys())))
-            print("result.permissions.keys =" + str(len(result.permissions.keys())))
-            print("result.binary.keys =" + str(len(result.binary.keys())))
-            print("result.trackers.keys =" + str(len(result.trackers.keys())))
-            print("result.exported =" + str(len(result.exported.keys())))
-            print("result.manifest.keys =" + str(len(result.manifest.keys())))
-            print("result.code.keys() =" + str(len(result.code.keys())))
+            # print("results_keys =" + str(len(results_key)))
+            # print("result.cert_result =" + str(len(result.cert_result.keys())))
+            # print("result.permissions.keys =" + str(len(result.permissions.keys())))
+            # print("result.binary.keys =" + str(len(result.binary.keys())))
+            # print("result.trackers.keys =" + str(len(result.trackers.keys())))
+            # print("result.exported =" + str(len(result.exported.keys())))
+            # print("result.manifest.keys =" + str(len(result.manifest.keys())))
+            # print("result.code.keys() =" + str(len(result.code.keys())))
             for key in result.cert_result.keys():
                 results_content.append("{:.2f}%\n".format(100 * result.cert_result[key] / result.count))
             for key in result.permissions.keys():
@@ -248,19 +248,19 @@ def main():
                 worksheet.cell(i + 2, 1, results_key[i])
             # 写入第二列数据
                 worksheet.cell(i + 2, 2, results_content[i])
-            if len(results_key) == len(results_content):
-                print("results_key==results_content=="+str(len(results_key))+"\n")
-            else:
-                print("results_content==" + str(len(results_content))+"\n")
-                print("results_key=="+str(len(results_key))+"\n")
+            # if len(results_key) == len(results_content):
+            #     print("results_key==results_content=="+str(len(results_key))+"\n")
+            # else:
+            #     print("results_content==" + str(len(results_content))+"\n")
+            #     print("results_key=="+str(len(results_key))+"\n")
         else:
             for i in range(len(results_content)):
                 results_content[i] = "0.00%"
-            if len(results_key) == len(results_content):
-                print("results_key==results_content=="+str(len(results_key))+"\n")
-            else:
-                print("results_content==" + str(len(results_content))+"\n")
-                print("results_key=="+str(len(results_key))+"\n")
+            # if len(results_key) == len(results_content):
+            #     print("results_key==results_content=="+str(len(results_key))+"\n")
+            # else:
+            #     print("results_content==" + str(len(results_content))+"\n")
+            #     print("results_key=="+str(len(results_key))+"\n")
             for key in result.cert_result.keys():
                 try:
                     results_content[results_key.index(key)]="{:.2f}%\n".format(
