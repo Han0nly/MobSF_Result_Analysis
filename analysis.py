@@ -218,7 +218,7 @@ def main():
         result.analyse_all()
         if index == 0:
             # 写入第一列数据，第一行已经有数据了，i+2
-            results_key = list(result.cert_result.keys()) + list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
+            results_key = list(result.cert_result.keys()) + list(result.domains.keys()) +list(result.permissions.keys()) + list(result.binary.keys()) + list(result.trackers.keys()) + list(result.exported.keys()) + list(result.manifest.keys()) + list(result.code.keys())
             print("results_keys =" + str(len(results_key)))
             print("result.cert_result =" + str(len(result.cert_result.keys())))
             print("result.permissions.keys =" + str(len(result.permissions.keys())))
