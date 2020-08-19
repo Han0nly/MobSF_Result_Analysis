@@ -47,6 +47,13 @@ class MobSF_result:
 
     def analyse_certificate(self):
         self.cert_result = {}
+        self.cert_result['cert_only_v1'] = 0
+        self.cert_result['cert_only_v2'] = 0
+        self.cert_result['cert_only_v3'] = 0
+        self.cert_result['cert_nocert'] = 0
+        self.cert_result['cert_v1v2'] = 0
+        self.cert_result['cert_v1v3'] = 0
+        self.cert_result['cert_v2v3'] = 0
         self.cert_result['cert_v1_false'] = 0
         self.cert_result['cert_v2_false'] = 0
         self.cert_result['cert_v3_false'] = 0
@@ -58,20 +65,41 @@ class MobSF_result:
                     self.cert_result["cert_"+item['certificate_analysis']['description']] = 1
                 certificate_info = item['certificate_analysis']['certificate_info']
                 split_info = certificate_info.split('\n')
+                v1_false = 0
+                v2_false = 0
+                v3_false = 0
                 for line in split_info:
                     # v1 signature:
                     split_line = line.split(':')
                     if 'v1' in split_line[0]:
                         if 'True' not in split_line[1]:
+                            v1_false = 1
                             self.cert_result['cert_v1_false'] = self.cert_result['cert_v1_false'] + 1
                     # v2 signature:
                     elif 'v2' in split_line[0]:
                         if 'True' not in split_line[1]:
+                            v2_false = 1
                             self.cert_result['cert_v2_false'] = self.cert_result['cert_v2_false'] + 1
                     # v3 signature:
                     elif 'v3' in split_line[0]:
                         if 'True' not in split_line[1]:
+                            v3_false = 1
                             self.cert_result['cert_v3_false'] = self.cert_result['cert_v3_false'] + 1
+                if v1_false and v2_false and v3_false:
+                    self.cert_result['cert_nocert'] = self.cert_result['cert_nocert'] + 1
+                elif v1_false and not v2_false and not v3_false:
+                    self.cert_result['cert_v2v3'] = self.cert_result['cert_v2v3'] + 1
+                elif not v1_false and v2_false and not v3_false:
+                    self.cert_result['cert_v1v3'] = self.cert_result['cert_v1v3'] + 1
+                elif not v1_false and not v2_false and v3_false:
+                    self.cert_result['cert_v1v2'] = self.cert_result['cert_v1v2'] + 1
+                elif not v1_false and v2_false and v3_false:
+                    self.cert_result['cert_only_v1'] = self.cert_result['cert_only_v1'] + 1
+                elif v1_false and not v2_false and v3_false:
+                    self.cert_result['cert_only_v2'] = self.cert_result['cert_only_v2'] + 1
+                elif v1_false and v2_false and not v3_false:
+                    self.cert_result['cert_only_v3'] = self.cert_result['cert_only_v3'] + 1
+
 
     def analyse_permissions(self):
         self.permissions = {}
@@ -205,8 +233,8 @@ def main():
     # worksheet2 = workbook.create_sheet()  # 默认插在工作簿末尾
     # worksheet2.title = "New Title"
     # Project = ['Analysis_name','PHOTOGRAPHY', 'ANDROID_WEAR', 'COMICS', 'PRODUCTIVITY', 'PERSONALIZATION', 'BOOKS_AND_REFERENCE', 'FINANCE', 'SPORTS', 'SOCIAL', 'PARENTING', 'LIFESTYLE', 'EVENTS', 'HOUSE_AND_HOME', 'BUSINESS', 'MAPS_AND_NAVIGATION', 'SHOPPING', 'ENTERTAINMENT', 'ART_AND_DESIGN', 'EDUCATION', 'TOOLS', 'NEWS_AND_MAGAZINES', 'WEATHER', 'LIBRARIES_AND_DEMO', 'AUTO_AND_VEHICLES', 'VIDEO_PLAYERS', 'FAMILY', 'DATING', 'HEALTH_AND_FITNESS', 'MUSIC_AND_AUDIO', 'TRAVEL_AND_LOCAL', 'BEAUTY', 'MEDICAL', 'FOOD_AND_DRINK', 'COMMUNICATION', 'GAME']
-    # Project = ['Analysis_name','360','apkpure','baidu','coolapk','qq','wandoujia','xiaomi','GooglePlay']
-    Project = ['Analysis_name','apks']
+    Project = ['Analysis_name','360','apkpure','baidu','coolapk','qq','wandoujia','xiaomi','GooglePlay']
+    # Project = ['Analysis_name','apks']
     # 写入第一行数据，行号和列号都从1开始计数
     for i in range(len(Project)):
         worksheet.cell(1, i + 1, Project[i])
