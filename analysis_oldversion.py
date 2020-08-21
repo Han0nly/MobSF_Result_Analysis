@@ -104,15 +104,23 @@ class MobSF_result:
     def analyse_permissions(self):
         self.permissions = {}
         for item in self.content:
+            count = 0
             if item['permissions']:
                 for perm in item['permissions'].keys():
                     if item['permissions'][perm]['status'] == "dangerous":
+                        count = count + 1
                         if 'perm_'+perm in self.permissions.keys():
                             self.permissions['perm_'+perm] = self.permissions['perm_'+perm] + 1
                             # print("%s:%s" % (perm, self.permissions[perm]))
                         else:
                             self.permissions['perm_'+perm] = 1
                             # print("%s:%s" % (perm, self.permissions[perm]))
+            key = "perm_"+str(count)
+            if key in self.permissions.keys():
+                self.permissions[key] = self.permissions[key] +1
+            else:
+                self.permissions[key] = 1
+
 
     def analyse_manifest(self):
         self.manifest = {}
