@@ -14,9 +14,9 @@ class perm_result(MobSF_result):
                     if item['permissions'][perm]['status'] == "dangerous":
                         count = count + 1
                 worksheet1.cell(index, 1, item["file_name"])
-                worksheet1.cell(index, 1, self.colname)
-                worksheet1.cell(index, 1, count)
-                worksheet1.cell(index, 1, 1)
+                worksheet1.cell(index, 2, self.colname)
+                worksheet1.cell(index, 3, count)
+                worksheet1.cell(index, 4, 1)
 
 
 workbook1 = openpyxl.Workbook()
