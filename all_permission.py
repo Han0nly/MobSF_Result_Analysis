@@ -34,6 +34,7 @@ Project = ['Analysis_name','GooglePlay','360', 'wandoujia', 'xiaomi']
 for col in Project[1:]:
     a = perm_result(col)
     a.analyse_perm()
+workbook1.save(filename="permissions.xlsx")
 
 
 
